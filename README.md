@@ -41,6 +41,17 @@ pyinstaller --onefile --add-data "config.ini:." run.py --name cryptobridge-linux
 
 <hr>
 
+# Requirements:
+
+1. Python 3.9+ 
+2. FastAPI package to run api
+3. Uvcorn package to run api
+4. Pydantic package to describe API schemas
+5. PyMongo package to interact with MongoDB
+6. PyCryptoDome package to use RIPEMD160 cause OpenSSL removed this algorithm for furthest versions
+
+<hr>
+
 # Roadmap:
 
 - [x] Open dev access to blockchain
