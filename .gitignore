@@ -1,0 +1,10 @@
+.venv
+.env
+.idea
+account
+blockchain
+node
+experiments
+data
+plyvel
+build
