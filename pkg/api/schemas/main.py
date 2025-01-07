@@ -26,6 +26,7 @@ class TxOut(BaseModel):
 class BlockTxIn(BaseModel):
     prev_tx: str
     prev_index: int
+    script_sig: ScriptSig
     sequence: int
     amount: int
     script_pubkey: ScriptPubKey

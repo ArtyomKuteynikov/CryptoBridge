@@ -19,6 +19,7 @@ class WalletRouter:
     """
     Router for wallet-related operations.
     """
+
     def __init__(self, db: AsyncBlockchainDB, utxos: UTXOs):
         self.router = APIRouter()
         self.router.add_api_route(
@@ -46,7 +47,7 @@ class WalletRouter:
             description="Retrieve paginated transactions associated with a specific wallet."
         )
         self.router.add_api_route(
-            "{wallet}/utxos",
+            "/{wallet}/utxos",
             self.get_utxos,
             methods=["GET"],
             response_model=TransactionsPageResponse,

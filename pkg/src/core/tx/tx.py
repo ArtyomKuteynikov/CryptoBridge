@@ -20,7 +20,9 @@ class Tx:
         self.locktime: int = locktime
         self.sig_hash: int = 1
         self.timestamp: int = timestamp
-        self.TxId = self.id()
+        self.TxId: str = self.id()
+        self.size: int = self.calculate_size()
+        self.fee: int = 0
 
     def id(self) -> str:
         """Human-readable Tx id"""
@@ -176,11 +178,13 @@ class Tx:
         input_amount, output_amount = 0, 0
         for tx_in in self.tx_ins:
             if tx_in.prev_tx.hex() in utxos:
-                if utxos.get(tx_in.prev_tx.hex()).tx_outs[tx_in.prev_index]:
-                    input_amount += utxos.get(tx_in.prev_tx.hex()).tx_outs[tx_in.prev_index].amount
+                prev_tx = utxos.get(tx_in.prev_tx.hex()).tx_outs[tx_in.prev_index]
+                if prev_tx:
+                    input_amount += prev_tx.amount
         for tx_out in self.tx_outs:
             output_amount += tx_out.amount
-        return input_amount - output_amount
+        self.fee = input_amount - output_amount
+        return self.fee
 
     def calculate_size(self):
         """Get size of serialised tx"""

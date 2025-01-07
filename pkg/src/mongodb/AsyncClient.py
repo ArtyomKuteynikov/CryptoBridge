@@ -47,7 +47,12 @@ class AsyncBlockchainDB:
         return await self.blocks_collection.find_one({'BlockHeader.blockHash': block_hash})
 
     async def get_block(self, height: int) -> Dict:
-        return await self.blocks_collection.find_one({'Height': height})
+        block = await self.blocks_collection.find_one({'Height': height})
+        if block:
+            block['Miner'] = encode_base58_checksum(
+                b"\x1c" + bytes.fromhex(block['Txs'][0]['tx_outs'][0]['script_pubkey']['cmds'][2])
+            )
+        return block
 
     async def last_block(self) -> Dict:
         return await self.blocks_collection.find_one({}, sort=[('Height', -1)])
@@ -115,8 +120,6 @@ class AsyncBlockchainDB:
 
     async def find_transaction(self, transaction_id: str) -> Dict | None:
         tx = await self.transactions_collection.find_one({'TxId': transaction_id})
-        if not tx:
-            return None
         return tx
 
     async def find_transactions_by_wallet(self, wallet_address, page, page_size) -> Tuple[List[Dict], int]:

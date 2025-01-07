@@ -72,7 +72,7 @@ class MemoryPool:
         """Get avg. fee/tx_size rate from memory pool."""
         size = 0
         for tx in self.MemoryPool.values():
-            size += tx.calculate_size()
+            size += tx.size
         return int(max(1, size // self.MAX_BLOCK_SIZE) * self.BASE_FEE)
     
     def double_spending(self, tx: Tx) -> bool:
@@ -89,7 +89,7 @@ class MemoryPool:
         txs = list()
         for tx in self.MemoryPool.values():
             txs.append(tx)
-        return sorted(txs, key=lambda tx: tx.calculate_fee(self.UTXOs)/tx.calculate_size())
+        return sorted(txs, key=lambda tx: tx.calculate_fee(self.UTXOs)/tx.size)
 
     def pick_txs_to_block(self) -> Tuple[List[Tx], List[Tuple[bytes, int]], List[bytes], int, int]:
         added_transactions = list()
@@ -98,13 +98,13 @@ class MemoryPool:
         fee = 0
         block_size = 80
         for tx in self.sorted_txs():
-            if block_size + tx.calculate_size() > self.MAX_BLOCK_SIZE:
+            if block_size + tx.size > self.MAX_BLOCK_SIZE:
                 return added_transactions, spent_transactions, tx_ids, fee, block_size
             if not self.double_spending(tx):
-                block_size += tx.calculate_size()
+                block_size += tx.size
                 added_transactions.append(tx)
                 tx_ids.append(tx.hash())
-                fee += tx.calculate_fee(self.UTXOs)
+                fee += tx.fee
                 for spent in tx.tx_ins:
                     spent_transactions.append((spent.prev_tx, spent.prev_index))
             else:

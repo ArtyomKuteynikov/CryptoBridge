@@ -1,5 +1,4 @@
 import asyncio
-import time
 from multiprocessing import Process
 from typing import List
 
@@ -71,7 +70,7 @@ class TransactionsRouter:
             summary="Broadcast Transaction"
         )
         self.router.add_api_route(
-            "/unverified",
+            "/unverified/{tx_hash}",
             self.get_tx_from_mem_pool,
             methods=["GET"],
             response_model=TransactionResponse,

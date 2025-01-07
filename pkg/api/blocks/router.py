@@ -134,7 +134,7 @@ class BlockRouter:
         Raises:
         - **HTTPException**: If the block is not found.
         """
-        block = self.db.last_block()
+        block = await self.db.last_block()
         if block:
             return JSONResponse(content=BlockResponse(data=block).dict())
         raise HTTPException(
