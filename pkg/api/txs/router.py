@@ -100,8 +100,9 @@ class TransactionsRouter:
                     status_code=404,
                     detail=ErrorResponse(details={"msg": f"transaction not found"}).dict()
                 )
-        transaction = await self.db.add_tx_in_details(transaction.to_dict())
-        transaction["confirmed"] = False
+            transaction = transaction.to_dict()
+            transaction["confirmed"] = False
+        transaction = await self.db.add_tx_in_details(transaction)
         return JSONResponse(content=TransactionResponse(data=transaction).dict())
 
     async def get_transactions(
