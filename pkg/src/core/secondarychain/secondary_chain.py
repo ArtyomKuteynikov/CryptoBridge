@@ -41,7 +41,7 @@ class SecondaryChain:
             pass
 
     def delete(self, blocks: List[Block | str | bytes]):
-        """Delete a transactions from the memory pool."""
+        """Delete block from secondary chain."""
         for block in blocks:
             self.remove(block)
 

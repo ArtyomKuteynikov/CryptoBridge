@@ -92,7 +92,7 @@ class TransactionsRouter:
         Returns:
         - **TransactionResponse**: The transaction details.
         """
-        transaction = await self.db.add_tx_in_details(await self.db.find_transaction(transaction_id))
+        transaction = await self.db.find_transaction(transaction_id)
         if not transaction:
             transaction = self.memory_pool.get(transaction_id)
             if not transaction:
@@ -100,8 +100,8 @@ class TransactionsRouter:
                     status_code=404,
                     detail=ErrorResponse(details={"msg": f"transaction not found"}).dict()
                 )
-            transaction = await self.db.add_tx_in_details(transaction.to_dict())
-            transaction["confirmed"] = False
+        transaction = await self.db.add_tx_in_details(transaction.to_dict())
+        transaction["confirmed"] = False
         return JSONResponse(content=TransactionResponse(data=transaction).dict())
 
     async def get_transactions(
