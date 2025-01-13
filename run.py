@@ -53,6 +53,10 @@ if __name__ == "__main__":
         try:
             if run_api:
                 """Run API"""
+                try:
+                    multiprocessing.set_start_method("spawn")
+                except RuntimeError:
+                    pass
                 for _ in range(api_cores):
                     api = Process(target=runserver, args=(utxos, MemPool, api_port, db_name, db_host, db_port))
                     api.start()
