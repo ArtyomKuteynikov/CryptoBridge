@@ -34,6 +34,7 @@ if __name__ == "__main__":
     """API"""
     api_port = int(config['API'].get('port', "5000"))
     run_api = bool(int(config['API'].get('active', "0")))
+    api_cores = int(config['API'].get('cores', "1"))
 
     """Parent Node"""
     if config.get("PARENT", "host"):
@@ -47,12 +48,15 @@ if __name__ == "__main__":
         MemPool = MemoryPool(manager.dict(), utxos)
         newBlockAvailable = NewBlocks(manager.dict())
         secondaryChain = SecondaryChain(manager.dict())
+        api_treads = []
 
         try:
             if run_api:
                 """Run API"""
-                api = Process(target=runserver, args=(utxos, MemPool, api_port, db_name, db_host, db_port))
-                api.start()
+                for _ in range(api_cores):
+                    api = Process(target=runserver, args=(utxos, MemPool, api_port, db_name, db_host, db_port))
+                    api.start()
+                    api_treads.append(api)
 
             """ Start Server and Listen for miner requests """
             sync = SyncManager(localHost, localPort, db_name, db_host, db_port, newBlockAvailable, secondaryChain,
@@ -77,10 +81,10 @@ if __name__ == "__main__":
             blockchain.main(minerWallet)
         except (KeyboardInterrupt, InterruptedError, SystemExit):
             try_to_kill_process(startServer)
-            if run_api:
+            for api in api_treads:
                 try_to_kill_process(api)
         except Exception as e:
             print("ERROR: ", e)
             try_to_kill_process(startServer)
-            if run_api:
+            for api in api_treads:
                 try_to_kill_process(api)

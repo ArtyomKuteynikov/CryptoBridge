@@ -1,4 +1,3 @@
-import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,8 +13,8 @@ from pkg.src.mongodb import AsyncBlockchainDB
 
 class API:
     """Blockchain API interface"""
-    def __init__(self, utxos: UTXOs, mem_pool: MemoryPool, port: int, db_name: str, db_host: str, db_port: int):
-        self.app = FastAPI(title="ChanceBitCoin", version="1.0.0")
+    def __init__(self):
+        self.app = FastAPI(title="CryptoBridge Coin", version="1.1.0")
         self.app.add_middleware(
             CORSMiddleware,
             allow_origins=["*"],  # Разрешить запросы с любого источника
@@ -36,13 +35,6 @@ class API:
             self.internal_exception_handler
         )
 
-        self.utxos: UTXOs = utxos
-        self.mem_pool: MemoryPool = mem_pool
-        self.db_name: str = db_name
-        self.db_host: str = db_host
-        self.db_port: int = db_port
-        self.port: int = port
-
     @staticmethod
     async def internal_exception_handler(request: Request, exc: Exception):
         return JSONResponse(
@@ -58,9 +50,9 @@ class API:
     async def shutdown():
         pass
 
-    def run(self):
+    def run(self, utxos: UTXOs, mem_pool: MemoryPool, db_name: str, db_host: str, db_port: int):
         """Start API server"""
-        db: AsyncBlockchainDB = AsyncBlockchainDB(self.db_name, self.db_host, self.db_port)
+        db: AsyncBlockchainDB = AsyncBlockchainDB(db_name, db_host, db_port)
 
         self.app.include_router(
             BlockRouter(db).router,
@@ -68,12 +60,12 @@ class API:
             tags=["Blocks"]
         )
         self.app.include_router(
-            WalletRouter(db, self.utxos).router,
+            WalletRouter(db, utxos).router,
             prefix="/wallet",
             tags=["Wallet"]
         )
         self.app.include_router(
-            TransactionsRouter(db, self.utxos, self.mem_pool).router,
+            TransactionsRouter(db, utxos, mem_pool).router,
             prefix="/transactions",
             tags=["Transactions"]
         )
@@ -82,5 +74,4 @@ class API:
             prefix="/nodes",
             tags=["Nodes"]
         )
-
-        uvicorn.run(self.app, host="0.0.0.0", port=self.port)
+        return self.app

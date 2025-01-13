@@ -1,11 +1,19 @@
+import asyncio
+
+from hypercorn.asyncio import serve
+from hypercorn.config import Config
+
 from pkg.api.main import API
 from pkg.src import UTXOs, MemoryPool
 
 
 def runserver(utxos: UTXOs, mem_pool: MemoryPool, port: int, db_name: str, db_host: str, db_port: int):
     """Function to run API server in a separate thread."""
-    api = API(utxos, mem_pool, port, db_name, db_host, db_port)
-    api.run()
+    api = API()
+    app = api.run(utxos, mem_pool, db_name, db_host, db_port)
+    config = Config()
+    config.bind = [f'0.0.0.0:{port}']
+    asyncio.run(serve(app, config))
 
 
 __all__ = ['runserver']

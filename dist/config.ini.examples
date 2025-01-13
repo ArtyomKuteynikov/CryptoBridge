@@ -1,19 +1,20 @@
 # Node settings
 [NODE]
 host = # YOUR NODE IP
-port = # YOUR NODE PORT
+port = # YOUR NODE PORT (default: 1111)
 mine = # START MINING OR RUN NODE WITHOUT MINING (1 or 0)
 wallet = # YOUR CBC WALLET
 
 # Parent node address
 [PARENT]
 host = # PARENT NODE IP
-port = # PARENT NODE PORT
+port = # PARENT NODE PORT (default: 1111)
 
 # API config
 [API]
 active = # RUN API OR NOT (1 or 0)
-port = # API PORT
+port = # API PORT (default: 5000)
+cores = # NUM OF THREADS FOR API (default: 1)
 
 # MongoDB config
 [DB]
