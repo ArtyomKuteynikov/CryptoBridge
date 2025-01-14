@@ -3,6 +3,8 @@ import multiprocessing
 import sys
 from multiprocessing import Manager, Process
 
+from hypercorn import Config
+
 from pkg.api import runserver
 from pkg.src import Blockchain, MemoryPool, NewBlocks, SecondaryChain, UTXOs, SyncManager
 
@@ -57,8 +59,10 @@ if __name__ == "__main__":
                     multiprocessing.set_start_method("spawn")
                 except RuntimeError:
                     pass
+                config = Config()
+                config.bind = [f'0.0.0.0:{api_port}']
                 for _ in range(api_cores):
-                    api = Process(target=runserver, args=(utxos, MemPool, api_port, db_name, db_host, db_port))
+                    api = Process(target=runserver, args=(utxos, MemPool, config, db_name, db_host, db_port))
                     api.start()
                     api_treads.append(api)
 
