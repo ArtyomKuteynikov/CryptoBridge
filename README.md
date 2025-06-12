@@ -41,7 +41,7 @@ pyinstaller --onefile --add-data "config.ini:." run.py --name cryptobridge-linux
 
 <hr>
 
-# Requirements:
+# Development requirements:
 
 1. Python 3.9+ 
 2. FastAPI package to run api
