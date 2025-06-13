@@ -15,6 +15,7 @@ port = # PARENT NODE PORT (default: 1111)
 active = # RUN API OR NOT (1 or 0)
 port = # API PORT (default: 5000)
 cores = # NUM OF THREADS FOR API (default: 1)
+rps = # Requests limit from 1 ip per second (default: 10)
 
 # MongoDB config
 [DB]

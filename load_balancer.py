@@ -64,10 +64,12 @@ class LoadBalancer:
                     {"error": "Rate limit exceeded. Please try again in 1 second."},
                     status=429
                 )
+
             worker_port = await self.get_next_worker()
             url = f'http://localhost:{worker_port}{request.path_qs}'
             async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers=dict(request.headers)) as response:
+                data = await request.read()
+                async with session.request(request.method, url, data=data, headers=dict(request.headers)) as response:
                     response_body = await response.read()
                     return web.Response(
                         body=response_body,

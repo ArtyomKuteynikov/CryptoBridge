@@ -20,7 +20,7 @@ def try_to_kill_process(p):
 
 async def start_server(load_balancer):
     app = web.Application()
-    app.router.add_get('/{tail:.*}', load_balancer.handle_request)
+    app.router.add_route('*', '/{tail:.*}', load_balancer.handle_request)
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, load_balancer.host, load_balancer.port)

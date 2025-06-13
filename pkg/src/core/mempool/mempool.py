@@ -14,7 +14,7 @@ class MemoryPool:
     def __init__(self, memory_pool: DictProxy, utxos: UTXOs):
         self.MemoryPool: DictProxy[str, Tx] = memory_pool
         self.UTXOs = utxos
-        self.prevTxs: List[bytes] = []
+        self.prevTxs: List[bytes] = list()
 
     def __contains__(self, tx_id: str) -> bool:
         return tx_id in self.MemoryPool
@@ -109,6 +109,7 @@ class MemoryPool:
                     spent_transactions.append((spent.prev_tx, spent.prev_index))
             else:
                 self.remove(tx)
+        self.prevTxs = list()
         return added_transactions, spent_transactions, tx_ids, fee, block_size
 
     def __iter__(self):
