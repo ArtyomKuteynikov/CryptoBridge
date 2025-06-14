@@ -78,10 +78,11 @@ class MemoryPool:
     def double_spending(self, tx: Tx) -> bool:
         """ Check if it is a double spending Attempt """
         for tx_in in tx.tx_ins:
-            if tx_in.prev_tx not in self.prevTxs and tx_in.prev_tx.hex() in self.UTXOs:
+            if ((tx_in.prev_tx + tx_in.prev_index.to_bytes(4, "little")) not in self.prevTxs
+                    and tx_in.prev_tx.hex() in self.UTXOs):
                 if not self.UTXOs.get(tx_in.prev_tx.hex()).tx_outs[tx_in.prev_index]:
                     return True
-                self.prevTxs.append(tx_in.prev_tx)
+                self.prevTxs.append(tx_in.prev_tx + tx_in.prev_index.to_bytes(4, "little"))
             else:
                 return True
 

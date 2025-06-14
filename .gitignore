@@ -8,3 +8,4 @@ data
 plyvel
 build
 config.ini
+*_test.py

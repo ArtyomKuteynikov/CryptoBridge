@@ -18,7 +18,6 @@ class Send:
             amount: float,
             utxos: UTXOs,
             memory_pool: MemoryPool,
-            spent_txs: List,
     ):
         self.version: int = version
         self.script_key = self.scriptPubKey(from_address)
@@ -33,7 +32,7 @@ class Send:
         self.isBalanceEnough: bool = False
         self.fee: int = 0
         self.Total: int = 0
-        self.spent_txs: List[str] = spent_txs
+        self.spent_txs: List[str] = list()
         self.get_spent_txs()
 
     @staticmethod

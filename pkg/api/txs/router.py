@@ -80,7 +80,6 @@ class TransactionsRouter:
         self.db: AsyncBlockchainDB = db
         self.memory_pool: MemoryPool = memory_pool
         self.utxos: UTXOs = utxos
-        self.spent_txs: List[str] = list()
 
     async def get_transaction(self, transaction_id: str):
         """
@@ -187,7 +186,7 @@ class TransactionsRouter:
         Raises:
         - **HTTPException**: If there are insufficient funds to create the transaction.
         """
-        tx = Send(stmt.version, stmt.from_address, stmt.to_address, stmt.amount, self.utxos, self.memory_pool, self.spent_txs)
+        tx = Send(stmt.version, stmt.from_address, stmt.to_address, stmt.amount, self.utxos, self.memory_pool)
         if not tx.prepareTransaction():
             raise HTTPException(
                 status_code=400,
